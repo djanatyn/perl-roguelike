@@ -33,8 +33,7 @@ my $player = Player->new;
 while(1) {
     clear;
     addch($player->y, $player->x,"@");
-    move($player->y, $player->x);
-    $player->move(getch);
+    move($player->walk(getch));
     refresh;
 }
 
