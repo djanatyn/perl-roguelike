@@ -17,7 +17,7 @@ sub walk {
 	l => [0,1],
 	);
     my ($y,$x) = @{$map{$ch}};
-    $self->y += $y; $self->x += $x;
+    $self->y($self->y + $y); $self->x($self->x + $x);
 
     return ($self->y ,$self->x);
 }
@@ -33,8 +33,8 @@ my $player = Player->new;
 while(1) {
     clear;
     addch($player->y, $player->x,"@");
-    $player->move(getch);
     move($player->y, $player->x);
+    $player->move(getch);
     refresh;
 }
 
