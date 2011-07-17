@@ -1,43 +1,41 @@
 #!/usr/bin/perl -w
+package Player;
+use strict;
+use Curses;
+use Moose;
+
+has 'health' => (is => 'rw', isa => 'Int', default => 100);
+has 'x'      => (is => 'rw', isa => 'Int', default => 5);
+has 'y'      => (is => 'rw', isa => 'Int', default => 5);
+
+sub walk {
+    my ($self,$ch) = @_;
+    my %map = (
+	h => [0,-1],
+	j => [1,0],
+	k => [-1,0],
+	l => [0,1],
+	);
+    my ($y,$x) = @{$map{$ch}};
+    $self->y += $y; $self->x += $x;
+
+    return ($self->y ,$self->x);
+}
+
+package main;
 use strict;
 use Curses;
 
-my $status = new Curses;
-
-my %player = (
-    'health' => 100,
-    'x' => 5,
-    'y' => 5,
-);
-
-sub processThings {
-    my $_ = getch;
-    if (/[hjkl]/) { &walking($_); }
-    else { &displayStatus("badkey"); }
-}
-sub displayStatus {
-    my ($_) = @_;
-    if (/badkey/) { addstr(20,5,"Sorry, I don't know what that key does."); }
-    else { addstr(20,5,"You moved to the $_"); }
-}
-sub walking {
-    my ($_) = @_;
-    my $dir;
-    if (/h/) { $player{x}--; $dir = 'left'; };
-    if (/j/) { $player{y}++; $dir = 'down'; };
-    if (/k/) { $player{y}--; $dir = 'up'; };
-    if (/l/) { $player{x}++; $dir = 'right'; };
-    clear;
-    &displayStatus($dir);
-}
-
 initscr;
 
+my $player = Player->new;
+
 while(1) {
-    addch($player{y},$player{x},"@");
-    move($player{y},$player{x});
+    clear;
+    addch($player->y, $player->x,"@");
+    $player->move(getch);
+    move($player->y, $player->x);
     refresh;
-    &processThings;
 }
 
 endwin;
